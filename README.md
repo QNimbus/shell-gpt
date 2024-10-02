@@ -43,17 +43,17 @@ To add the necessary aliases to your environment, you need to run the `setup.sh`
     chmod +x setup.sh
     ```
 
-2. Run the `setup.sh` script:
+2. Source the `setup.sh` script:
 
     ```sh
-    ./setup.sh
+    source ./setup.sh
     ```
 
 This will add the required aliases to your environment, allowing you to use the `sgpt` command.
 
 ### Aliases Created
 
-The `setup.sh` script creates the following aliases in your `~/.bash_aliases` file:
+The `setup.sh` script reads the aliases from the `aliases` file and adds them to your `~/.bash_aliases` file:
 
 - **sgpt**: Runs the Shell-GPT Docker container with the current directory mounted as the working directory and the user's configuration directory mounted for persistence.
 
@@ -64,12 +64,12 @@ The `setup.sh` script creates the following aliases in your `~/.bash_aliases` fi
 - **sgpt-help**: Runs the `glow` binary inside the Shell-GPT Docker container to display the `usage.md` file.
 
     ```sh
-    alias sgpt-help="docker run --rm --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir --entrypoint glow shell-gpt -p /app/usage.md"
+    alias sgpt-help="docker run --rm --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -e TERM=xterm-256color -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir --entrypoint glow shell-gpt -s dark -p /app/usage.md"
     ```
 
 ### Customizing Aliases
 
-You can customize these aliases by editing the `~/.bash_aliases` file. For example, if you want to change the working directory or add additional volume mounts, you can modify the `docker run` command in the alias definition.
+You can customize these aliases by editing the `aliases` file. For example, if you want to change the working directory or add additional volume mounts, you can modify the `docker run` command in the alias definition.
 
 After making changes to `~/.bash_aliases`, run the following command to apply the changes:
 

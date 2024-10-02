@@ -6,26 +6,40 @@ if [ -z "$BASH_VERSION" ]; then
   exit 1
 fi
 
+# Check if script is sourced
+if [ "$0" = "$BASH_SOURCE" ]; then
+  echo "This script is intended to be sourced, not executed."
+  echo
+  echo "Example usage: source ./setup.sh"
+  exit 1
+fi
+
+# Copy functions to ~/.config/shell_gpt/functions
+FUNCTIONS_DIR="$HOME/.config/shell_gpt/functions"
+mkdir -p "$FUNCTIONS_DIR"
+cp -r ./functions/* "$FUNCTIONS_DIR"
+
 # Check if ~/.bash_aliases exists and is sourced by ~/.bashrc
 if [ ! -f ~/.bash_aliases ]; then
   echo "~/.bash_aliases file does not exist. Creating it."
   touch ~/.bash_aliases
 fi
 
-if ! grep -q "if \[ -f ~/.bash_aliases \]; then . ~/.bash_aliases; fi" ~/.bashrc; then
+if ! grep -q ". ~/.bash_aliases" ~/.bashrc; then
   echo "~/.bash_aliases is not sourced by ~/.bashrc. Adding the source command."
   echo "if [ -f ~/.bash_aliases ]; then . ~/.bash_aliases; fi" >> ~/.bashrc
   source ~/.bashrc
 fi
 
-# Define the aliases
-SGPT_ALIAS='alias sgpt="docker run --rm -it --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir shell-gpt"'
-SGPT_HELP_ALIAS='alias sgpt-help="docker run --rm --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir --entrypoint glow shell-gpt -p /app/usage.md"'
+# Check if aliases file exists
+if [ ! -f ./aliases ]; then
+  echo "Aliases file not found. Please ensure the 'aliases' file is in the same directory as this script."
+  exit 1
+fi
 
 # Explain what the script does
 echo -e "\nThis script will add the following aliases to your ~/.bash_aliases file:\n"
-echo -e "$SGPT_ALIAS"
-echo -e "$SGPT_HELP_ALIAS"
+cat ./aliases
 echo -e "\nIt will also ensure that ~/.bash_aliases is sourced by your ~/.bashrc file.\n"
 
 # Ask for confirmation
@@ -36,20 +50,21 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
   exit 1
 fi
 
-# Check if the aliases already exist in ~/.bash_aliases
-if grep -q "alias sgpt=" ~/.bash_aliases; then
-  echo "Alias 'sgpt' already exists in ~/.bash_aliases. Skipping addition."
-else
-  echo "$SGPT_ALIAS" >> ~/.bash_aliases
-fi
+# Append the aliases to ~/.bash_aliases if they do not already exist
+while IFS= read -r line; do
+  # Skip empty lines and lines that contain only whitespace
+  if [[ -z "$line" || "$line" =~ ^[[:space:]]*$ ]]; then
+    continue
+  fi
 
-if grep -q "alias sgpt-help=" ~/.bash_aliases; then
-  echo "Alias 'sgpt-help' already exists in ~/.bash_aliases. Skipping addition."
-else
-  echo "$SGPT_HELP_ALIAS" >> ~/.bash_aliases
-fi
+  if ! grep -q "$line" ~/.bash_aliases; then
+    echo "$line" >> ~/.bash_aliases
+  else
+    echo -e "\nAlias '$line' already exists in ~/.bash_aliases. Skipping addition."
+  fi
+done < ./aliases
 
 # Source the ~/.bash_aliases to apply changes
 source ~/.bash_aliases
 
-echo "Aliases added and applied successfully."
+echo "Aliases added and functions copied successfully."

@@ -50,10 +50,10 @@ fi
 # Define aliases using indexed arrays
 alias_names=("sgpt" "chat" "sgpt-debug" "sgpt-help" "sgpt-clear-chat")
 alias_commands=(
-  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt"
-  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt --chat sgpt-chat"
-  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) --entrypoint /bin/bash shell-gpt"
-  "docker run --rm -it --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -e TERM=xterm-256color -v ~/:/home/$(whoami) --entrypoint glow shell-gpt --style dark --pager /app/usage.md"
+  "docker run --rm -it --name sgpt-chat --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt"
+  "docker run --rm -it --name sgpt-chat --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt --chat sgpt-chat"
+  "docker run --rm -it --name sgpt-chat --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) --entrypoint /bin/bash shell-gpt"
+  "docker run --rm -it --name sgpt-chat --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -e TERM=xterm-256color -v ~/:/home/$(whoami) --entrypoint glow shell-gpt --style dark --pager /app/usage.md"
   "docker volume rm gpt-cache && echo 'Chat cache cleared.'"
 )
 

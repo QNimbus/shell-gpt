@@ -1,4 +1,0 @@
-# Aliases for Shell-GPT
-
-alias sgpt="docker run --rm -it --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir shell-gpt"
-alias sgpt-help="docker run --rm -it --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -e TERM=xterm-256color -v $(pwd):/app/workdir -v ~/.config:/home/$(whoami)/.config --workdir /app/workdir --entrypoint glow shell-gpt --style dark --pager /app/usage.md"

@@ -38,6 +38,19 @@ Execute custom functions defined in your system.
 sgpt --function "my_custom_function"
 ```
 
+### 6. Log Analysis
+Analyze logs from various sources by passing them using stdin along with a prompt.
+```sh
+docker logs -n 20 my_app | sgpt "check logs, find errors, provide possible solutions"
+```
+Example output:
+```
+Error Detected: Connection timeout at line 7.
+Possible Solution: Check network connectivity and firewall settings.
+Error Detected: Memory allocation failed at line 12.
+Possible Solution: Consider increasing memory allocation or optimizing application memory usage.
+```
+
 ## Configuration
 Configure `shell-gpt` using a runtime configuration file located at `~/.config/shell_gpt/.sgptrc`. Set parameters like API key, default model, cache settings, and more.
 

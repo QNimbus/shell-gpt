@@ -2,6 +2,19 @@
 
 This repository contains a Dockerfile to build a Docker image for Shell-GPT, which includes the `glow` binary and necessary Python packages.
 
+## Table of Contents
+- [Building the Docker Image](#building-the-docker-image)
+  - [Using `build.sh`](#using-buildsh)
+  - [Using `docker build`](#using-docker-build)
+- [Running the Docker Container](#running-the-docker-container)
+- [Setting Up Aliases](#setting-up-aliases)
+  - [Running `setup.sh`](#running-setupsh)
+  - [Aliases Created](#aliases-created)
+  - [Customizing Aliases](#customizing-aliases)
+- [Usage](#usage)
+- [Example](#example)
+- [Related Content](#related-content)
+
 ## Building the Docker Image
 
 You can build the Docker image using the provided `build.sh` script or by running the `docker build` command directly.
@@ -88,3 +101,8 @@ sgpt "What is the capital of France?"
 ```
 
 This command will use Shell-GPT to provide an answer to your query.
+
+## Related Content
+
+- [Shell-GPT on PyPI](https://pypi.org/project/shell-gpt/)
+- [Shell-GPT Documentation](https://github.com/TheR1D/shell_gpt#readme)

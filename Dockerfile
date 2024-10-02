@@ -35,5 +35,11 @@ RUN pip install --no-cache-dir shell-gpt
 # Add usage.md to the image
 ADD usage.md /app/usage.md
 
+# Create a directory for chat cache
+RUN mkdir -p /tmp/chat_cache && chmod 0777 /tmp/chat_cache
+VOLUME /tmp/chat_cache
+
+# CMD ["--help"]
+
 # Entrypoint for sgpt
 ENTRYPOINT ["sgpt"]

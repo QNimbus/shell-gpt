@@ -14,6 +14,22 @@ if [ "$0" = "$BASH_SOURCE" ]; then
   exit 1
 fi
 
+# Parse command line arguments
+FORCE=false
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    -f|--force) FORCE=true ;;
+    *) echo "Unknown parameter passed: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+# Truncate ~/.bash_aliases if --force is provided
+if [ "$FORCE" = true ]; then
+  > ~/.bash_aliases
+  echo "~/.bash_aliases has been truncated."
+fi
+
 # Copy functions to ~/.config/shell_gpt/functions
 FUNCTIONS_DIR="$HOME/.config/shell_gpt/functions"
 mkdir -p "$FUNCTIONS_DIR"
@@ -31,40 +47,32 @@ if ! grep -q ". ~/.bash_aliases" ~/.bashrc; then
   source ~/.bashrc
 fi
 
-# Check if aliases file exists
-if [ ! -f ./aliases ]; then
-  echo "Aliases file not found. Please ensure the 'aliases' file is in the same directory as this script."
-  exit 1
-fi
-
-# Explain what the script does
-echo -e "\nThis script will add the following aliases to your ~/.bash_aliases file:\n"
-cat ./aliases
-echo -e "\nIt will also ensure that ~/.bash_aliases is sourced by your ~/.bashrc file.\n"
-
-# Ask for confirmation
-read -p "Do you want to proceed? (y/n): " -n 1 -r
-echo
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo "Operation cancelled."
-  exit 1
-fi
+# Define aliases using indexed arrays
+alias_names=("sgpt" "chat" "sgpt-debug" "sgpt-help" "sgpt-clear-chat")
+alias_commands=(
+  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt"
+  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) shell-gpt --chat sgpt-chat"
+  "docker run --rm -it --user $(id -u):$(id -g) -e SHELL_NAME=$SHELL -e HOME=/home/$(whoami) -e TERM=xterm-256color -v gpt-cache:/tmp/chat_cache -v $(pwd):/app/workdir -v ~/:/home/$(whoami) --entrypoint /bin/bash shell-gpt"
+  "docker run --rm -it --user $(id -u):$(id -g) -e HOME=/home/$(whoami) -e TERM=xterm-256color -v ~/:/home/$(whoami) --entrypoint glow shell-gpt --style dark --pager /app/usage.md"
+  "docker volume rm gpt-cache && echo 'Chat cache cleared.'"
+)
 
 # Append the aliases to ~/.bash_aliases if they do not already exist
-while IFS= read -r line; do
-  # Skip empty lines and lines that contain only whitespace
-  if [[ -z "$line" || "$line" =~ ^[[:space:]]*$ ]]; then
-    continue
-  fi
-
-  if ! grep -q "$line" ~/.bash_aliases; then
-    echo "$line" >> ~/.bash_aliases
+for i in "${!alias_names[@]}"; do
+  alias_command="alias ${alias_names[$i]}=\"${alias_commands[$i]}\""
+  if ! grep -Fq "$alias_command" ~/.bash_aliases; then
+    echo "$alias_command" >> ~/.bash_aliases
   else
-    echo -e "\nAlias '$line' already exists in ~/.bash_aliases. Skipping addition."
+    echo -e "\nAlias '$alias_command' already exists in ~/.bash_aliases. Skipping addition."
   fi
-done < ./aliases
+done
 
 # Source the ~/.bash_aliases to apply changes
 source ~/.bash_aliases
 
 echo "Aliases added and functions copied successfully."
+echo
+echo "Note: Consider running the following commands:"
+echo
+echo "sgpt --install-functions"
+echo "sgpt --install-integration"

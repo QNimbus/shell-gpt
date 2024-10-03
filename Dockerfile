@@ -39,7 +39,5 @@ ADD usage.md /app/usage.md
 RUN mkdir -p /tmp/chat_cache && chmod 0777 /tmp/chat_cache
 VOLUME /tmp/chat_cache
 
-# CMD ["--help"]
-
 # Entrypoint for sgpt
 ENTRYPOINT ["sgpt"]
